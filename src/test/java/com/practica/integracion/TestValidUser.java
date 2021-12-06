@@ -18,7 +18,7 @@ public class TestValidUser {
 
 	@Mock
 	private static AuthDAO mockAuthDao;
-	@Mock
+	@Mock   
 	private static GenericDAO mockGenericDao;
 
 	@Test
