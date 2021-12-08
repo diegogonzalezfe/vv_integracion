@@ -64,19 +64,19 @@ public class TestInvalidUser {
 
     @Test
     public void testAddRemoteSystemWithInvalidUserAndSystem() throws Exception {
-        User validUser = new User("1", "Ana", "Lopez", "Madrid", new ArrayList<Object>(Arrays.asList(1, 2)));
-        when(mockAuthDao.getAuthData(validUser.getId())).thenReturn(validUser);
+        User invalidUser = new User("1", "Ana", "Lopez", "Madrid", new ArrayList<Object>(Arrays.asList(1, 2)));
+        when(mockAuthDao.getAuthData(invalidUser.getId())).thenReturn(null);
 
-        String validRemote = "Hola";
-        when(mockGenericDao.updateSomeData(validUser, validRemote)).thenReturn(false);
+        String invalidRemote = "Hola";
+        when(mockGenericDao.updateSomeData(null, invalidRemote)).thenReturn(false);
 
         InOrder ordered = inOrder(mockAuthDao, mockGenericDao);
         SystemManager manager = new SystemManager(mockAuthDao, mockGenericDao);
 
-        assertThrows(SystemManagerException.class, () -> manager.addRemoteSystem(validUser.getId(), validRemote));
+        assertThrows(SystemManagerException.class, () -> manager.addRemoteSystem(invalidUser.getId(), invalidRemote));
 
-        ordered.verify(mockAuthDao).getAuthData(validUser.getId());
-        ordered.verify(mockGenericDao).updateSomeData(validUser, validRemote);
+        ordered.verify(mockAuthDao).getAuthData(invalidUser.getId());
+        ordered.verify(mockGenericDao).updateSomeData(null, invalidRemote);
     }
 
     @Test
