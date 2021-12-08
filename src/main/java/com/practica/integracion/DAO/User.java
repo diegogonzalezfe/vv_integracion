@@ -1,6 +1,7 @@
 package com.practica.integracion.DAO;
 
 import java.util.List;
+import java.util.Objects;
 
 public class User {
 

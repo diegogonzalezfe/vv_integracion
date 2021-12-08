@@ -15,6 +15,7 @@ import javax.naming.OperationNotSupportedException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.when;
@@ -66,7 +67,7 @@ public class TestInvalidUser {
         User validUser = new User("1", "Ana", "Lopez", "Madrid", new ArrayList<Object>(Arrays.asList(1, 2)));
         when(mockAuthDao.getAuthData(validUser.getId())).thenReturn(validUser);
 
-        Object validRemote = "Hola";
+        String validRemote = "Hola";
         when(mockGenericDao.updateSomeData(validUser, validRemote)).thenReturn(false);
 
         InOrder ordered = inOrder(mockAuthDao, mockGenericDao);
@@ -76,5 +77,21 @@ public class TestInvalidUser {
 
         ordered.verify(mockAuthDao).getAuthData(validUser.getId());
         ordered.verify(mockGenericDao).updateSomeData(validUser, validRemote);
+    }
+
+    @Test
+    public void testDeleteRemoteSystem() throws Exception {
+        User validUser = new User("1", "Antonio", "Perez", "Madrid", new ArrayList<Object>());
+        when(mockAuthDao.getAuthData(validUser.getId())).thenReturn(validUser);
+        String validRemote = "3";
+        when(mockGenericDao.deleteSomeData(validUser, validRemote)).thenReturn(true);
+
+        InOrder ordered = inOrder(mockAuthDao, mockGenericDao);
+        SystemManager manager = new SystemManager(mockAuthDao, mockGenericDao);
+
+        assertThrows(SystemManagerException.class, () -> manager.deleteRemoteSystem(validUser.getId(), validRemote));
+
+        ordered.verify(mockAuthDao).getAuthData(validUser.getId());
+        ordered.verify(mockGenericDao).deleteSomeData(validUser, validRemote);
     }
 }
