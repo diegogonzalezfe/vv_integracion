@@ -30,8 +30,8 @@ public class TestInvalidUser {
 
     @Test
     public void testStartRemoteSystemWithInValidUserAndSystem() throws Exception {
-        User invalidUser = new User("1", "Ana", "Lopez", "Madrid", null);
-        when(mockAuthDao.getAuthData(invalidUser.getId())).thenReturn(null);
+        User user = new User("1", "Ana", "Lopez", "Madrid", null);
+        when(mockAuthDao.getAuthData(user.getId())).thenReturn(null);
 
         String invalidId = "12345";
         when(mockGenericDao.getSomeData(null, "where id=" + invalidId)).thenThrow(OperationNotSupportedException.class);
@@ -39,16 +39,33 @@ public class TestInvalidUser {
         InOrder ordered = inOrder(mockAuthDao, mockGenericDao);
         SystemManager manager = new SystemManager(mockAuthDao, mockGenericDao);
 
-        assertThrows(SystemManagerException.class, () -> manager.startRemoteSystem(invalidUser.getId(), invalidId));
+        assertThrows(SystemManagerException.class, () -> manager.startRemoteSystem(user.getId(), invalidId));
 
-        ordered.verify(mockAuthDao).getAuthData(invalidUser.getId());
+        ordered.verify(mockAuthDao).getAuthData(user.getId());
         ordered.verify(mockGenericDao).getSomeData(null, "where id=" + invalidId);
     }
 
     @Test
+    public void testStartRemoteSystemWithInValidIdAndSystem() throws Exception {
+        User user = new User("1", "Ana", "Lopez", "Madrid", new ArrayList<Object>(Arrays.asList(1, 2)));
+        when(mockAuthDao.getAuthData(user.getId())).thenReturn(user);
+
+        String invalidId = "12345";
+        when(mockGenericDao.getSomeData(user, "where id=" + invalidId)).thenThrow(OperationNotSupportedException.class);
+
+        InOrder ordered = inOrder(mockAuthDao, mockGenericDao);
+        SystemManager manager = new SystemManager(mockAuthDao, mockGenericDao);
+
+        assertThrows(SystemManagerException.class, () -> manager.startRemoteSystem(user.getId(), invalidId));
+
+        ordered.verify(mockAuthDao).getAuthData(user.getId());
+        ordered.verify(mockGenericDao).getSomeData(user, "where id=" + invalidId);
+    }
+
+    @Test
     public void testStopRemoteSystemWithInValidUserAndSystem() throws Exception {
-        User invalidUser = new User("1", "Ana", "Lopez", "Madrid", null);
-        when(mockAuthDao.getAuthData(invalidUser.getId())).thenReturn(null);
+        User user = new User("1", "Ana", "Lopez", "Madrid", null);
+        when(mockAuthDao.getAuthData(user.getId())).thenReturn(null);
 
         String invalidId = "12345";
         when(mockGenericDao.getSomeData(null, "where id=" + invalidId)).thenThrow(OperationNotSupportedException.class);
@@ -56,10 +73,27 @@ public class TestInvalidUser {
         InOrder ordered = inOrder(mockAuthDao, mockGenericDao);
         SystemManager manager = new SystemManager(mockAuthDao, mockGenericDao);
 
-        assertThrows(SystemManagerException.class, () -> manager.stopRemoteSystem(invalidUser.getId(), invalidId));
+        assertThrows(SystemManagerException.class, () -> manager.stopRemoteSystem(user.getId(), invalidId));
 
-        ordered.verify(mockAuthDao).getAuthData(invalidUser.getId());
+        ordered.verify(mockAuthDao).getAuthData(user.getId());
         ordered.verify(mockGenericDao).getSomeData(null, "where id=" + invalidId);
+    }
+
+    @Test
+    public void testStopRemoteSystemWithInValidIdAndSystem() throws Exception {
+        User user = new User("1", "Ana", "Lopez", "Madrid", new ArrayList<Object>(Arrays.asList(1, 2)));
+        when(mockAuthDao.getAuthData(user.getId())).thenReturn(user);
+
+        String invalidId = "12345";
+        when(mockGenericDao.getSomeData(user, "where id=" + invalidId)).thenThrow(OperationNotSupportedException.class);
+
+        InOrder ordered = inOrder(mockAuthDao, mockGenericDao);
+        SystemManager manager = new SystemManager(mockAuthDao, mockGenericDao);
+
+        assertThrows(SystemManagerException.class, () -> manager.stopRemoteSystem(user.getId(), invalidId));
+
+        ordered.verify(mockAuthDao).getAuthData(user.getId());
+        ordered.verify(mockGenericDao).getSomeData(user, "where id=" + invalidId);
     }
 
     @Test
