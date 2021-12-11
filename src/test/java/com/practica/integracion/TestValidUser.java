@@ -80,7 +80,7 @@ public class TestValidUser {
 	}
 
 	@Test
-	public void testDeleteRemoteSystem() throws Exception {
+	public void testDeleteRemoteSystemWithValidUser() throws Exception {
 		User validUser = new User("1", "Antonio", "Perez", "Madrid", new ArrayList<Object>());
 		when(mockAuthDao.getAuthData(validUser.getId())).thenReturn(validUser);
 		String validRemote = "3";
